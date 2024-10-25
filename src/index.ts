@@ -43,7 +43,7 @@ export async function convertDarkIcon(icon: IconInput): Promise<Buffer> {
 
     // Get the color data of the icon at the edges.
     const { width, height } = canvas;
-    const edgeSize = 20;
+    const edgeSize = 0.05 * Math.min(width, height);
 
     const edgeColorsRaw = [
         context.getImageData(0, 0, edgeSize, height).data,
