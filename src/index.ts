@@ -1,4 +1,4 @@
-import { createCanvas, loadImage } from "@napi-rs/canvas";
+import { createCanvas, loadImage } from 'canvas';
 
 // icon: string/Buffer/Uint8Array
 export type IconInput = string | Buffer | Uint8Array;
