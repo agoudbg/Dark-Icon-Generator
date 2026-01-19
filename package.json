@@ -1,7 +1,7 @@
 {
   "name": "dark-icon-generator",
   "version": "1.0.3",
-  "description": "",
+  "description": "Generate dark mode icons from light mode icons for various platforms.",
   "main": "lib/index.js",
   "module": "lib/esm/index.js",
   "browser": "lib/esm/browser.js",
@@ -36,7 +36,12 @@
   "files": [
     "lib/**/*"
   ],
-  "keywords": [],
+  "keywords": [
+    "dark mode",
+    "icons",
+    "icon generator",
+    "dark icons"
+  ],
   "author": "agoudbg <agoudbg@gmail.com>",
   "homepage": "https://github.com/agoudbg/Dark-Icon-Generator",
   "license": "MIT",
