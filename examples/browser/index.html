@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Icon Generator · Browser Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c111c;
+            --card: #111827;
+            --panel: #0f172a;
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --accent: #22d3ee;
+            --border: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            background: radial-gradient(circle at 20% 20%, #112031, var(--bg) 40%),
+                radial-gradient(circle at 80% 10%, #0c2a37, #080d14 35%);
+            font-family: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 16px;
+        }
+
+        main {
+            width: min(1100px, 100%);
+            background: var(--panel);
+            border: 1px solid var(--border);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+            border-radius: 18px;
+            padding: 32px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            letter-spacing: -0.02em;
+        }
+
+        p.lead {
+            margin: 0 0 24px;
+            color: var(--muted);
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .dropzone {
+            display: block;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 150ms ease, background 150ms ease;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .dropzone:hover {
+            border-color: var(--accent);
+            background: rgba(34, 211, 238, 0.05);
+        }
+
+        .dropzone strong {
+            color: var(--accent);
+        }
+
+        .previews {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .preview-card {
+            background: #0c1220;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .preview-card header {
+            font-size: 14px;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            background: #0b1020;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .status {
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .status.ok {
+            color: #34d399;
+        }
+
+        .status.err {
+            color: #f87171;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>Dark Icon Generator</h1>
+        <p class="lead">Drop or choose a light icon and we will convert it to a dark variant directly in your browser.
+        </p>
+
+        <div class="panel">
+            <label class="dropzone" for="">
+                <div>Click to select an image or drop it here.</div>
+                <div><strong>PNG / JPG / SVG</strong> are supported by your browser.</div>
+            </label>
+            <input id="file-input" type="file" accept="image/*" hidden>
+
+            <div class="previews">
+                <div class="preview-card">
+                    <header><span>Original</span><small id="original-meta"></small></header>
+                    <img id="original-preview" alt="Original icon preview" />
+                </div>
+                <div class="preview-card">
+                    <header><span>Darkened</span><small id="converted-meta"></small></header>
+                    <img id="converted-preview" alt="Converted icon preview" />
+                </div>
+            </div>
+
+            <div id="status" class="status">Waiting for an image…</div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { convertDarkIcon } from './lib/esm/browser.js';
+
+        const fileInput = document.getElementById('file-input');
+        const dropzone = document.querySelector('.dropzone');
+        const originalPreview = document.getElementById('original-preview');
+        const convertedPreview = document.getElementById('converted-preview');
+        const statusEl = document.getElementById('status');
+        const originalMeta = document.getElementById('original-meta');
+        const convertedMeta = document.getElementById('converted-meta');
+
+        let originalUrl;
+        let convertedUrl;
+
+        function setStatus(text, tone = '') {
+            statusEl.textContent = text;
+            statusEl.className = `status ${tone}`.trim();
+        }
+
+        function revoke(url) {
+            if (url) {
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        async function handleFile(file) {
+            revoke(originalUrl);
+            revoke(convertedUrl);
+
+            originalUrl = URL.createObjectURL(file);
+            originalPreview.src = originalUrl;
+            originalMeta.textContent = `${Math.round(file.size / 1024)} KB`;
+            setStatus('Converting…');
+
+            try {
+                const blob = await convertDarkIcon(file);
+                convertedUrl = URL.createObjectURL(blob);
+                convertedPreview.src = convertedUrl;
+                convertedMeta.textContent = `${Math.round(blob.size / 1024)} KB`;
+                setStatus('Done', 'ok');
+            } catch (error) {
+                setStatus(`Failed: ${error instanceof Error ? error.message : 'Unknown error'}`, 'err');
+            }
+        }
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files?.[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        dropzone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropzone.style.borderColor = 'var(--accent)';
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.style.borderColor = 'var(--border)';
+        });
+
+        dropzone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropzone.style.borderColor = 'var(--border)';
+            const file = event.dataTransfer?.files?.[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        dropzone.addEventListener('click', () => fileInput.click());
+    </script>
+</body>
+
+</html>

@@ -130,4 +130,5 @@ dist
 .pnp.*
 
 /lib
+examples/browser/lib
 src/__tests__/img/*-dark.png

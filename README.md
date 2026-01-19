@@ -33,3 +33,34 @@ async function convertIcon() {
 
 convertIcon();
 ```
+
+## Browser usage
+
+The package ships a browser-friendly entry point that avoids the Node.js `canvas` dependency. Import the browser build and pass a URL, `File`, `Blob`, or `ImageBitmap`; you will get back a `Blob` you can show directly.
+
+```html
+<script type="module">
+    import { convertDarkIcon } from 'dark-icon-generator/browser';
+
+    const input = document.querySelector('input[type=file]');
+    const preview = document.querySelector('#dark-preview');
+
+    input.addEventListener('change', async () => {
+            const file = input.files?.[0];
+            if (!file) return;
+
+            const blob = await convertDarkIcon(file);
+            preview.src = URL.createObjectURL(blob);
+    });
+    </script>
+```
+
+Run the local browser demo after building:
+
+```bash
+npm install
+npm run build
+npx http-server examples/browser  # or any static server
+```
+
+Then open http://localhost:8080 to try the in-browser converter.
