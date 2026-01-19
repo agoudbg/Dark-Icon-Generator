@@ -1,4 +1,4 @@
-import { createCanvas, loadImage } from 'canvas';
+import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { convertOnCanvas } from './core.js';
 
 // icon: string/Buffer/Uint8Array

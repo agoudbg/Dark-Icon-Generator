@@ -6,7 +6,7 @@
         "outDir": "./lib",
         "strict": true,
         "lib": [
-            "es6",
+            "esnext",
             "dom"
         ]
     },
