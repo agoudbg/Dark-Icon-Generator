@@ -21,16 +21,17 @@
     }
   },
   "scripts": {
-    "build": "npm run build:cjs && npm run build:esm",
+    "build": "pnpm build:cjs && pnpm build:esm",
     "build:cjs": "tsc -p tsconfig.json",
     "build:esm": "tsc -p tsconfig.esm.json",
-    "demo:prepare": "npm run build && node scripts/prepare-browser-demo.js",
+    "demo:prepare": "pnpm build && node scripts/prepare-browser-demo.js",
+    "demo:start": "pnpm run demo:prepare && npx http-server examples/browser",
     "test": "jest --config jestconfig.json",
     "lint": "eslint .",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm run test && npm run lint",
-    "preversion": "npm run lint",
-    "version": "npm run lint && git add -A src",
+    "prepare": "pnpm run build",
+    "prepublishOnly": "pnpm run test && pnpm run lint",
+    "preversion": "pnpm run lint",
+    "version": "pnpm run lint && git add -A src",
     "postversion": "git push && git push --tags"
   },
   "files": [
