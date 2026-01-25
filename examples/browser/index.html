@@ -114,6 +114,7 @@
             background: #0b1020;
             border-radius: 10px;
             border: 1px solid var(--border);
+            visibility: hidden;
         }
 
         .status {
@@ -191,6 +192,7 @@
 
             originalUrl = URL.createObjectURL(file);
             originalPreview.src = originalUrl;
+            originalPreview.style.visibility = 'visible';
             originalMeta.textContent = `${Math.round(file.size / 1024)} KB`;
             setStatus('Converting…');
 
@@ -198,6 +200,7 @@
                 const blob = await convertDarkIcon(file);
                 convertedUrl = URL.createObjectURL(blob);
                 convertedPreview.src = convertedUrl;
+                convertedPreview.style.visibility = 'visible';
                 convertedMeta.textContent = `${Math.round(blob.size / 1024)} KB`;
                 setStatus('Done', 'ok');
             } catch (error) {
